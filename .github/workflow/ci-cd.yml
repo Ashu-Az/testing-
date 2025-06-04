@@ -1,0 +1,36 @@
+name: Local CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy-to-local:
+    runs-on: self-hosted  # Uses your local machine
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Stop existing containers
+      run: |
+        docker stop my-app || true
+        docker rm my-app || true
+    
+    - name: Build Docker image
+      run: |
+        docker build -t my-app:latest .
+    
+    - name: Run tests
+      run: |
+        docker run --rm my-app:latest python -c "print('Tests passed')"
+    
+    - name: Deploy container
+      run: |
+        docker run -d --name my-app -p 80:5000 my-app:latest
+        echo "App deployed at http://192.168.1.71"
+    
+    - name: Health check
+      run: |
+        sleep 5
+        curl -f http://localhost:5000/health

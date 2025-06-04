@@ -1,0 +1,10 @@
+# Files to ignore when building Docker image
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.git/
+.gitignore
+README.md
+.env
+.venv/
